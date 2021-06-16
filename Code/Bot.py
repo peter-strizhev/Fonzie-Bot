@@ -1,5 +1,5 @@
 # Imports
-from discord import colour
+from discord import channel, colour
 from discord.ext import commands
 from pprint import pprint
 import linecache
@@ -49,6 +49,17 @@ async def giphy(ctx, *, search):
 
     await session.close()
     await ctx.send(embed=embed)
+
+@bot.event
+async def on_message(message):
+    if message.author == bot.user:  # skip bot messages
+        return
+
+    # write all possible words in lower case. 
+    if message.content.lower() in ['wall']:
+        await message.channel.send('https://cdn.discordapp.com/attachments/767899814402326559/854588332247744572/1596575456116-1.png')
+
+    await bot.process_commands(message)  # to allow other commands
 
 # Code to get token for bot
 token = linecache.getline('Fonzie-Bot\Authentication Keys\Authentication.txt', 8)
