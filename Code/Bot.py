@@ -52,6 +52,9 @@ async def on_message(message):
         
     if message.content.lower() in ['response to kai']:
         await message.channel.send('https://tenor.com/view/cry-about-it-cat-hoverboard-cat-on-hoverboard-cry-gif-21748938')
+        
+    if message.content.lower() in ['yes']:
+        await message.channel.send('https://tenor.com/view/yes-chad-gif-18386674')
 
     await bot.process_commands(message)  # to allow other commands
     
