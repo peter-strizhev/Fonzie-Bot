@@ -1,9 +1,12 @@
 # Imports
+from aiohttp.client import request
 from discord import channel, colour
 from discord.ext import commands
 from pprint import pprint
+from github import Github
 from numpy import random
 import linecache
+import requests
 import discord
 import aiohttp
 import json
@@ -86,6 +89,29 @@ async def detect(ctx, user: discord.Member, arg):
     else:
         await ctx.send('You have to mention someone numnutz')
     
+
+# GitHub API --------------------------------------------------------------------------------------------------------------------------------------
+githubAPIToken = linecache.getline('Fonzie-Bot\Authentication Keys\Authentication.txt', 20).rstrip()
+github = Github(githubAPIToken)
+
+@bot.command()
+async def botstatus(ctx):
+    await ctx.send("https://github.com/Shrewkin/Fonzie-Bot/commit/main")
+
+@bot.command()
+async def git(ctx, keyword):
+    for repo in github.search_repositories(keyword):
+        await ctx.send('I found a repo that matches your keyword: https://github.com/{}'.format(repo.full_name))
+        break
+    
+@bot.command()
+async def gituser(ctx, keyword):
+    url = 'https://api.github.com/users/{}'.format(keyword)
+    urlData = requests.get(url).json()
+    if ('html_url' not in urlData):
+        await ctx.send('Github has no record of the username ' + keyword)
+    else:
+        await ctx.send('{}'.format(urlData['html_url']))
 
 # Code to get token for bot -----------------------------------------------------------------------------------------------------------------------
 token = linecache.getline('Fonzie-Bot\Authentication Keys\Authentication.txt', 8).rstrip()
