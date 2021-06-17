@@ -4,7 +4,8 @@ from discord import channel, colour
 from discord.ext import commands
 from pprint import pprint
 from github import Github
-from numpy import random
+from numpy import random as rand
+import random
 import linecache
 import requests
 import discord
@@ -42,6 +43,15 @@ async def on_message(message):
     # write all possible words in lower case. 
     if message.content.lower() in ['wall']:
         await message.channel.send('https://cdn.discordapp.com/attachments/767899814402326559/854588332247744572/1596575456116-1.png')
+        
+    if message.content.lower() in ['bradley']:
+        await message.channel.send('https://cdn.discordapp.com/attachments/630596126344609793/854344671279054908/VID_20200622_191526_839.mp4')
+        
+    if message.content.lower() in ['rekt']:
+        await message.channel.send('https://cdn.discordapp.com/attachments/630596126344609793/854004996801298433/iqlr99et24571.jpg')
+        
+    if message.content.lower() in ['response to kai']:
+        await message.channel.send('https://tenor.com/view/cry-about-it-cat-hoverboard-cat-on-hoverboard-cry-gif-21748938')
 
     await bot.process_commands(message)  # to allow other commands
     
@@ -63,7 +73,7 @@ async def giphy(ctx, *, search):
         search.replace(' ', '+')
         response = await session.get('http://api.giphy.com/v1/gifs/search?q=' + search + '&api_key=' + giphyKey + '&limit=10')
         data = json.loads(await response.text())
-        gif_choice = random.randint(0, 9)
+        gif_choice = rand.randint(0, 9)
         embed.set_image(url=data['data'][gif_choice]['images']['original']['url'])
 
     await session.close()
@@ -75,7 +85,7 @@ detectorAnswers = ['ITS OFF THE SCALE!!!', 'Its getting a bit sus my guy.', 'Non
 
 @bot.command()
 async def detect(ctx, user: discord.Member, arg):
-    randNum = random.randint(3)
+    randNum = rand.randint(3)
     if user:
         if randNum == 0:
             # await ctx.send("hello, {}".format(user.mention))
@@ -112,6 +122,27 @@ async def gituser(ctx, keyword):
         await ctx.send('Github has no record of the username ' + keyword)
     else:
         await ctx.send('{}'.format(urlData['html_url']))
+
+
+# Joke Commands -----------------------------------------------------------------------------------------------------------------------------------
+
+#Credit: AustinJacob
+@bot.command()
+async def penis(ctx, *users: discord.Member):
+    dongs = {}
+    msg = ""
+    state = random.getstate()
+
+    for user in users:
+        random.seed(user.id)
+        dongs[user] = "8{}D".format("=" * random.randint(0, 30))
+
+    random.setstate(state)
+    dongs = sorted(dongs.items(), key=lambda x: x[1])
+
+    for user, dong in dongs:
+        msg += "**{}'s size:**\n{}\n".format(user.display_name, dong)
+    await ctx.send(msg)
 
 # Code to get token for bot -----------------------------------------------------------------------------------------------------------------------
 token = linecache.getline('Fonzie-Bot\Authentication Keys\Authentication.txt', 8).rstrip()
