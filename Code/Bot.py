@@ -1,19 +1,33 @@
 # Imports
-from aiohttp.client import request
+# Discord
+from discord.ext.commands.core import command
 from discord import channel, colour
+from aiohttp.client import request
 from discord.ext import commands
-from pprint import pprint
-from github import Github
-from numpy import random as rand
-import random
-import linecache
 import requests
 import discord
+
+# Github
+from github import Github
+
+# Youtube
+from youtubesearchpython.internal.constants import VideoDurationFilter
+import youtubesearchpython as ytsearch
+from pytube import YouTube
+from bs4 import BeautifulSoup
+from lxml import etree
+import urllib
+import sys
+
+# Other
+from numpy import random as rand
+from pprint import pprint
+import linecache
 import aiohttp
+import random
 import json
 import os
 
-from discord.ext.commands.core import command
 
 # API Url's
 giphyURL = "http://api.giphy.com/v1/gifs/search"
@@ -55,6 +69,18 @@ async def on_message(message):
         
     if message.content.lower() in ['yes']:
         await message.channel.send('https://tenor.com/view/yes-chad-gif-18386674')
+        
+    if message.content.lower() in ['rage']:
+        await message.channel.send('https://tenor.com/view/rage-dog-smash-keyboard-gaming-gif-21319862')
+        
+    if message.content.lower() in ['who']:
+        await message.channel.send('cares')
+        
+    if message.content.lower() in ['goodnight', 'gn']:
+        await message.channel.send('https://cdn.discordapp.com/attachments/586797838458028034/855737692334850068/Snapchat-1984710211.jpg')
+        
+    if message.conetnt.lower() in ['weed']:
+        await message.channel.send('https://cdn.discordapp.com/attachments/628658329899499563/825228862198644758/eeeTHALLISc4ra1_1275649121454624768480P_1.mp4')
 
     await bot.process_commands(message)  # to allow other commands
     
@@ -90,6 +116,7 @@ detectorAnswers = ['ITS OFF THE SCALE!!!', 'Its getting a bit sus my guy.', 'Non
 async def detect(ctx, user: discord.Member, arg):
     randNum = rand.randint(3)
     if user:
+        random.seed(user.id)
         if randNum == 0:
             # await ctx.send("hello, {}".format(user.mention))
             await ctx.send('{}\'s {}: {}'.format(user.mention, arg, detectorAnswers[0]))
@@ -127,6 +154,83 @@ async def gituser(ctx, keyword):
         await ctx.send('{}'.format(urlData['html_url']))
 
 
+# Youtube API -------------------------------------------------------------------------------------------------------------------------------------
+@bot.command()
+async def searchvideo(ctx, keyword):
+    videosSearch = ytsearch.VideosSearch('NoCopyrightSounds', limit = 2)
+    print(videosSearch.result())
+    await ctx.send('https://www.youtube.com/watch?v={}'.format(videosSearch.result['id']))
+    
+def fetch_titles(url):
+    video_titles = []
+    html = requests.get(url)
+    soup = BeautifulSoup(html.text, "html5lib")
+    # print(soup.find_all('script'))
+    counter = 0
+    jsonFile = ''
+    for scripts in soup.find_all('script'):
+        counter += 1
+        if counter == 33:
+            print(scripts)
+            jsonFile = scripts
+            print(jsonFile["responseContext"]["contents"]["twoColumnBrowseResultsRenderer"]["tabs"]["tabRenderer"]["endpoint"]["content"]["sectionListRenderer"]["contents"]["sectionListRenderer"]["contents"]["itemSectionRenderer"]["contents"]["gridRenderer"]["videoId"])
+    
+    # # What the fuck even is this, trying to parse youtube data I ripped is a nightmare
+    # print("beginning")
+    # for ytInitialData in soup.find_all("ytInitialData"):
+    #     print("pretest")
+    #     for responseContext in soup.find_all("responseContext"):
+    #         print("test")
+    #         for contents in soup.find_all("contents"):
+    #             print("test1")
+    #             for twoColumnBrowseResultsRenderer in soup.find_all("twoColumnBrowseResultsRenderer"):
+    #                 print("test2")
+    #                 for tabs in soup.find_all("tabs"):
+    #                     print("test3")
+    #                     for tabRenderer in soup.find_all("tabRenderer"):
+    #                         print("test4")
+    #                         for endpoint in soup.find_all("endpoint"):
+    #                             print("test5")
+    #                             for content in soup.find_all("content"):
+    #                                 print("test6")
+    #                                 for sectionListRenderer in soup.find_all("sectionListRenderer"):
+    #                                     print("test7")
+    #                                     for contents in soup.find_all("contents"):
+    #                                         print("test8")
+    #                                         for itemSectionRenderer in soup.find_all("itemSectionRenderer"):
+    #                                             print("test9")
+    #                                             for contents in soup.find_all("contents"):
+    #                                                 print("test10")
+    #                                                 for gridRenderer in soup.find_all("gridRenderer"):
+    #                                                     print("test11")
+    #                                                     for videoId in soup.find_all("videoId"):
+    #                                                         print(videoId)
+                                                    
+    for entry in soup.find_all("videoId"):
+        for link in entry.find_all("videoId"):
+            youtube = etree.HTML(urllib.request.urlopen(link["href"]).read()) 
+            video_title = youtube.xpath("//span[@id='eow-title']/@title") 
+            if len(video_title) > 0:
+                video_titles.append({"title":video_title[0], "url":link.attrs["href"]})
+    return video_titles
+    
+@bot.event
+async def on_message(message):
+    if message.author == bot.user:  # skip bot messages
+        return
+
+    if message.content.lower() in ['saturday']:        
+        url = 'https://www.youtube.com/channel/UCKAXX-M_naEMD491kiqntBA/videos'
+        keyword = 'Saturday'
+        videoTitles = fetch_titles(url)
+        for video in videoTitles:
+            if video['title'].__contains__(keyword):
+                await message.channel.send(video['url'])
+                break
+
+    await bot.process_commands(message)  # to allow other commands
+
+
 # Joke Commands -----------------------------------------------------------------------------------------------------------------------------------
 
 #Credit: AustinJacob
@@ -138,7 +242,10 @@ async def penis(ctx, *users: discord.Member):
 
     for user in users:
         random.seed(user.id)
-        dongs[user] = "8{}D".format("=" * random.randint(0, 30))
+        if user.id == 245063782924156929:
+            dongs[user] = "8{}D".format("=" * 40)
+        else:
+            dongs[user] = "8{}D".format("=" * random.randint(0, 30))
 
     random.setstate(state)
     dongs = sorted(dongs.items(), key=lambda x: x[1])
