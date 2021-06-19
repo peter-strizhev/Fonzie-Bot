@@ -79,8 +79,18 @@ async def on_message(message):
     if message.content.lower() in ['goodnight', 'gn']:
         await message.channel.send('https://cdn.discordapp.com/attachments/586797838458028034/855737692334850068/Snapchat-1984710211.jpg')
         
-    if message.conetnt.lower() in ['weed']:
-        await message.channel.send('https://cdn.discordapp.com/attachments/628658329899499563/825228862198644758/eeeTHALLISc4ra1_1275649121454624768480P_1.mp4')
+    # if message.conetnt.lower() in ['weed']:
+    #     await message.channel.send('https://cdn.discordapp.com/attachments/628658329899499563/825228862198644758/eeeTHALLISc4ra1_1275649121454624768480P_1.mp4')
+
+    # Youtube API Stuff
+    if message.content.lower() in ['saturday']:        
+        url = 'https://www.youtube.com/channel/UCKAXX-M_naEMD491kiqntBA/videos'
+        keyword = 'Saturday'
+        videoTitles = fetch_titles(url)
+        for video in videoTitles:
+            if video['title'].__contains__(keyword):
+                await message.channel.send(video['url'])
+                break
 
     await bot.process_commands(message)  # to allow other commands
     
@@ -213,22 +223,6 @@ def fetch_titles(url):
             if len(video_title) > 0:
                 video_titles.append({"title":video_title[0], "url":link.attrs["href"]})
     return video_titles
-    
-@bot.event
-async def on_message(message):
-    if message.author == bot.user:  # skip bot messages
-        return
-
-    if message.content.lower() in ['saturday']:        
-        url = 'https://www.youtube.com/channel/UCKAXX-M_naEMD491kiqntBA/videos'
-        keyword = 'Saturday'
-        videoTitles = fetch_titles(url)
-        for video in videoTitles:
-            if video['title'].__contains__(keyword):
-                await message.channel.send(video['url'])
-                break
-
-    await bot.process_commands(message)  # to allow other commands
 
 
 # Joke Commands -----------------------------------------------------------------------------------------------------------------------------------
