@@ -164,7 +164,7 @@ async def gituser(ctx, keyword):
         await ctx.send('{}'.format(urlData['html_url']))
 
 
-# Youtube API -------------------------------------------------------------------------------------------------------------------------------------
+# TODO: Youtube API --------------------------------------------------------------------------------------------------------------------------------
 @bot.command()
 async def searchvideo(ctx, keyword):
     videosSearch = ytsearch.VideosSearch('NoCopyrightSounds', limit = 2)
@@ -177,13 +177,16 @@ def fetch_titles(url):
     soup = BeautifulSoup(html.text, "html5lib")
     # print(soup.find_all('script'))
     counter = 0
-    jsonFile = ''
     for scripts in soup.find_all('script'):
         counter += 1
         if counter == 33:
-            print(scripts)
-            jsonFile = scripts
-            print(jsonFile["responseContext"]["contents"]["twoColumnBrowseResultsRenderer"]["tabs"]["tabRenderer"]["endpoint"]["content"]["sectionListRenderer"]["contents"]["sectionListRenderer"]["contents"]["itemSectionRenderer"]["contents"]["gridRenderer"]["videoId"])
+            testString = str(scripts.text)
+            print(testString.find("videoId"))
+            # jsonFile = json.loads(scripts)
+            # print(jsonFile)
+            #for titles in jsonFile.find_all('text'):
+                #print(titles)
+            #print(jsonFile["responseContext"]["contents"]["twoColumnBrowseResultsRenderer"]["tabs"]["tabRenderer"]["endpoint"]["content"]["sectionListRenderer"]["contents"]["sectionListRenderer"]["contents"]["itemSectionRenderer"]["contents"]["gridRenderer"]["videoId"])
     
     # # What the fuck even is this, trying to parse youtube data I ripped is a nightmare
     # print("beginning")
@@ -215,7 +218,7 @@ def fetch_titles(url):
     #                                                     print("test11")
     #                                                     for videoId in soup.find_all("videoId"):
     #                                                         print(videoId)
-                                                    
+
     for entry in soup.find_all("videoId"):
         for link in entry.find_all("videoId"):
             youtube = etree.HTML(urllib.request.urlopen(link["href"]).read()) 
