@@ -1,9 +1,9 @@
 # Imports
 # Discord
 from discord.ext.commands.core import command
-from discord import channel, colour
+from discord import channel, colour, voice_client
 from aiohttp.client import request
-from discord.ext import commands
+from discord.ext import commands, tasks
 import requests
 import discord
 
@@ -16,6 +16,8 @@ import youtubesearchpython as ytsearch
 from pytube import YouTube
 from bs4 import BeautifulSoup
 from lxml import etree
+import youtube_dl
+import asyncio
 import urllib
 import sys
 
@@ -24,6 +26,7 @@ from numpy import random as rand
 from pprint import pprint
 import linecache
 import aiohttp
+import logging
 import random
 import json
 import os
@@ -33,11 +36,16 @@ import os
 giphyURL = "http://api.giphy.com/v1/gifs/search"
 
 # Command Initialization
-bot = commands.Bot(command_prefix=';')
+intents = discord.Intents().all()
+client = discord.Client(intents=intents)
+bot = commands.Bot(command_prefix=';', intents=intents)
+
+logging.basicConfig(level=logging.INFO)
 
 @bot.event
 async def on_ready():
     print('We have logged in as {0.user}'.format(bot))
+    
 
 # Sandbox -----------------------------------------------------------------------------------------------------------------------------------------
 @bot.command()
@@ -83,14 +91,14 @@ async def on_message(message):
     #     await message.channel.send('https://cdn.discordapp.com/attachments/628658329899499563/825228862198644758/eeeTHALLISc4ra1_1275649121454624768480P_1.mp4')
 
     # Youtube API Stuff
-    if message.content.lower() in ['saturday']:        
-        url = 'https://www.youtube.com/channel/UCKAXX-M_naEMD491kiqntBA/videos'
-        keyword = 'Saturday'
-        videoTitles = fetch_titles(url)
-        for video in videoTitles:
-            if video['title'].__contains__(keyword):
-                await message.channel.send(video['url'])
-                break
+    # if message.content.lower() in ['saturday']:        
+    #     url = 'https://www.youtube.com/channel/UCKAXX-M_naEMD491kiqntBA/videos'
+    #     keyword = 'Saturday'
+    #     videoTitles = fetch_titles(url)
+    #     for video in videoTitles:
+    #         if video['title'].__contains__(keyword):
+    #             await message.channel.send(video['url'])
+    #             break
 
     await bot.process_commands(message)  # to allow other commands
     
@@ -163,70 +171,164 @@ async def gituser(ctx, keyword):
     else:
         await ctx.send('{}'.format(urlData['html_url']))
 
+# TODO: Music Player -------------------------------------------------------------------------------------------------------------------------------
+youtube_dl.utils.bug_reports_message = lambda: ''
+
+ytdl_format_options = {
+    'format': 'bestaudio/best',
+    'restrictfilenames': True,
+    'noplaylist': True,
+    'nocheckcertificate': True,
+    'ignoreerrors': False,
+    'logtostderr': False,
+    'quiet': True,
+    'no_warnings': True,
+    'default_search': 'auto',
+    'source_address': '0.0.0.0' # bind to ipv4 since ipv6 addresses cause issues sometimes
+}
+
+ffmpeg_options = {
+    'options': '-vn'
+}
+
+ytdl = youtube_dl.YoutubeDL(ytdl_format_options)
+
+class YTDLSource(discord.PCMVolumeTransformer):
+    def __init__(self, source, *, data, volume=0.5):
+        super().__init__(source, volume)
+        self.data = data
+        self.title = data.get('title')
+        self.url = data.get('url')
+
+    @classmethod
+    async def from_url(cls, url, *, loop=None, stream=False):
+        loop = loop or asyncio.get_event_loop()
+        data = await loop.run_in_executor(None, lambda: ytdl.extract_info(url, download=not stream))
+        if 'entries' in data:
+            # take first item from a playlist
+            data = data['entries'][0]
+        filename = data['title'] if stream else ytdl.prepare_filename(data)
+        return filename
+    
+@bot.command(name='join', help='Tells the bot to join the voice channel')
+async def join(ctx):
+    if not ctx.message.author.voice:
+        await ctx.send("{} is not connected to a voice channel".format(ctx.message.author.name))
+        return
+    else:
+        channel = ctx.message.author.voice.channel
+    await channel.connect()
+    
+@bot.command(name='leave', help='Command to make the bot leave teh voice channel')
+async def leave(ctx):
+    voice_client = ctx.message.guild.voice_client
+    if voice_client.is_connected():
+        await voice_client.disconnect()
+    else:
+        await ctx.send("The bot is not connected to a voice channel")
+        
+@bot.command(name='play', help='Plays a song')
+async def play(ctx, url):
+    server = ctx.message.guild
+    voice_channel = server.voice_client
+    
+    if voice_channel == None:
+        channel = ctx.message.author.voice.channel
+        await channel.connect()
+        voice_channel = server.voice_client
+    
+    async with ctx.typing():
+        filename = await YTDLSource.from_url(url, loop=bot.loop)
+        voice_channel.play(discord.FFmpegPCMAudio(executable='C:\\ffmpeg2\\bin\\ffmpeg.exe', source=filename))
+    await ctx.send('**Now Playing:** {} **on YouTube**'.format(url))
+    
+@bot.command(name='pause', help='This command pauses teh song')
+async def pause(ctx):
+    voice_client = ctx.message.guild.voice_client
+    if voice_client.pause():
+        await voice_client.pause()
+    else:
+        await ctx.send("The bot is not playing anything you big goober.")
+
+@bot.command(name='resume', help='Resumes the current song.')
+async def resume(ctx):
+    voice_client = ctx.message.guild.voice_client
+    if voice_client.is_paused():
+        await voice_client.resume()
+    else:
+        await ctx.send("The bot wasnt playing anything, you should try to use the play command num nutz.")
+        
+@bot.command(name='stop', help='Stops the currently playing song')
+async def stop(ctx):
+    voice_client = ctx.message.guild.voice_client
+    if voice_client.is_playing():
+        await voice_client.stop()
+    else:
+        await ctx.send("The bot wasn't playing anything.")
+
 
 # TODO: Youtube API --------------------------------------------------------------------------------------------------------------------------------
-@bot.command()
-async def searchvideo(ctx, keyword):
-    videosSearch = ytsearch.VideosSearch('NoCopyrightSounds', limit = 2)
-    print(videosSearch.result())
-    await ctx.send('https://www.youtube.com/watch?v={}'.format(videosSearch.result['id']))
-    
-def fetch_titles(url):
-    video_titles = []
-    html = requests.get(url)
-    soup = BeautifulSoup(html.text, "html5lib")
-    # print(soup.find_all('script'))
-    counter = 0
-    for scripts in soup.find_all('script'):
-        counter += 1
-        if counter == 33:
-            testString = str(scripts.text)
-            print(testString.find("videoId"))
-            # jsonFile = json.loads(scripts)
-            # print(jsonFile)
-            #for titles in jsonFile.find_all('text'):
-                #print(titles)
-            #print(jsonFile["responseContext"]["contents"]["twoColumnBrowseResultsRenderer"]["tabs"]["tabRenderer"]["endpoint"]["content"]["sectionListRenderer"]["contents"]["sectionListRenderer"]["contents"]["itemSectionRenderer"]["contents"]["gridRenderer"]["videoId"])
-    
-    # # What the fuck even is this, trying to parse youtube data I ripped is a nightmare
-    # print("beginning")
-    # for ytInitialData in soup.find_all("ytInitialData"):
-    #     print("pretest")
-    #     for responseContext in soup.find_all("responseContext"):
-    #         print("test")
-    #         for contents in soup.find_all("contents"):
-    #             print("test1")
-    #             for twoColumnBrowseResultsRenderer in soup.find_all("twoColumnBrowseResultsRenderer"):
-    #                 print("test2")
-    #                 for tabs in soup.find_all("tabs"):
-    #                     print("test3")
-    #                     for tabRenderer in soup.find_all("tabRenderer"):
-    #                         print("test4")
-    #                         for endpoint in soup.find_all("endpoint"):
-    #                             print("test5")
-    #                             for content in soup.find_all("content"):
-    #                                 print("test6")
-    #                                 for sectionListRenderer in soup.find_all("sectionListRenderer"):
-    #                                     print("test7")
-    #                                     for contents in soup.find_all("contents"):
-    #                                         print("test8")
-    #                                         for itemSectionRenderer in soup.find_all("itemSectionRenderer"):
-    #                                             print("test9")
-    #                                             for contents in soup.find_all("contents"):
-    #                                                 print("test10")
-    #                                                 for gridRenderer in soup.find_all("gridRenderer"):
-    #                                                     print("test11")
-    #                                                     for videoId in soup.find_all("videoId"):
-    #                                                         print(videoId)
-
-    for entry in soup.find_all("videoId"):
-        for link in entry.find_all("videoId"):
-            youtube = etree.HTML(urllib.request.urlopen(link["href"]).read()) 
-            video_title = youtube.xpath("//span[@id='eow-title']/@title") 
-            if len(video_title) > 0:
-                video_titles.append({"title":video_title[0], "url":link.attrs["href"]})
-    return video_titles
-
+# @bot.command()
+# async def searchvideo(ctx, keyword):
+#     videosSearch = ytsearch.VideosSearch('NoCopyrightSounds', limit = 2)
+#     print(videosSearch.result())
+#     await ctx.send('https://www.youtube.com/watch?v={}'.format(videosSearch.result['id']))
+#     
+# def fetch_titles(url):
+#     video_titles = []
+#     html = requests.get(url)
+#     soup = BeautifulSoup(html.text, "html5lib")
+#     # print(soup.find_all('script'))
+#     counter = 0
+#     for scripts in soup.find_all('script'):
+#         counter += 1
+#         if counter == 33:
+#             testString = str(scripts.text)
+#             print(testString.find("videoId"))
+#             # jsonFile = json.loads(scripts)
+#             # print(jsonFile)
+#             #for titles in jsonFile.find_all('text'):
+#                 #print(titles)
+#             #print(jsonFile["responseContext"]["contents"]["twoColumnBrowseResultsRenderer"]["tabs"]["tabRenderer"]["endpoint"]["content"]["sectionListRenderer"]["contents"]["sectionListRenderer"]["contents"]["itemSectionRenderer"]["contents"]["gridRenderer"]["videoId"])
+#     
+#     # # What the fuck even is this, trying to parse youtube data I ripped is a nightmare
+#     # print("beginning")
+#     # for ytInitialData in soup.find_all("ytInitialData"):
+#     #     print("pretest")
+#     #     for responseContext in soup.find_all("responseContext"):
+#     #         print("test")
+#     #         for contents in soup.find_all("contents"):
+#     #             print("test1")
+#     #             for twoColumnBrowseResultsRenderer in soup.find_all("twoColumnBrowseResultsRenderer"):
+#     #                 print("test2")
+#     #                 for tabs in soup.find_all("tabs"):
+#     #                     print("test3")
+#     #                     for tabRenderer in soup.find_all("tabRenderer"):
+#     #                         print("test4")
+#     #                         for endpoint in soup.find_all("endpoint"):
+#     #                             print("test5")
+#     #                             for content in soup.find_all("content"):
+#     #                                 print("test6")
+#     #                                 for sectionListRenderer in soup.find_all("sectionListRenderer"):
+#     #                                     print("test7")
+#     #                                     for contents in soup.find_all("contents"):
+#     #                                         print("test8")
+#     #                                         for itemSectionRenderer in soup.find_all("itemSectionRenderer"):
+#     #                                             print("test9")
+#     #                                             for contents in soup.find_all("contents"):
+#     #                                                 print("test10")
+#     #                                                 for gridRenderer in soup.find_all("gridRenderer"):
+#     #                                                     print("test11")
+#     #                                                     for videoId in soup.find_all("videoId"):
+#     #                                                         print(videoId)
+# 
+#     for entry in soup.find_all("videoId"):
+#         for link in entry.find_all("videoId"):
+#             youtube = etree.HTML(urllib.request.urlopen(link["href"]).read()) 
+#             video_title = youtube.xpath("//span[@id='eow-title']/@title") 
+#             if len(video_title) > 0:
+#                 video_titles.append({"title":video_title[0], "url":link.attrs["href"]})
+#     return video_titles
 
 # Joke Commands -----------------------------------------------------------------------------------------------------------------------------------
 
