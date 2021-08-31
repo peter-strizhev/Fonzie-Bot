@@ -367,6 +367,6 @@ async def penis(ctx, *users: discord.Member):
     await ctx.send(msg)
 
 # Code to get token for bot -----------------------------------------------------------------------------------------------------------------------
-token = linecache.getline('Fonzie-Bot\Authentication Keys\Authentication.txt', 8).rstrip()
+token = linecache.getline('Fonzie-Bot\AuthenticationKeys\Authentication.txt', 8).rstrip()
 
 bot.run(token)
