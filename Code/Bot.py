@@ -24,6 +24,7 @@ import urllib
 import sys
 
 # Other
+from multiprocessing import Process
 from numpy import random as rand
 from pprint import pprint
 import linecache
@@ -31,6 +32,7 @@ import aiohttp
 import logging
 import random
 import json
+import time
 import os
 
 
@@ -345,7 +347,7 @@ async def stop(ctx):
 
 # Joke Commands -----------------------------------------------------------------------------------------------------------------------------------
 
-#Credit: AustinJacob
+#Credit: Whoever AustinJacob Stole this from (modified by me)
 @bot.command()
 async def penis(ctx, *users: discord.Member):
     dongs = {}
@@ -367,6 +369,7 @@ async def penis(ctx, *users: discord.Member):
     await ctx.send(msg)
 
 # Code to get token for bot -----------------------------------------------------------------------------------------------------------------------
-token = linecache.getline('Fonzie-Bot\AuthenticationKeys\Authentication.txt', 8).rstrip()
-
-bot.run(token)
+def launch():
+    token = linecache.getline('/mnt/c/Users/Striz/Desktop/DiscordBot/Fonzie-Bot/AuthenticationKeys/Authentication.txt', 8).rstrip()
+    print(token)
+    bot.run(token)
