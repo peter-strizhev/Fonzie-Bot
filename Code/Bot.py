@@ -2,7 +2,7 @@
 # Discord
 from asyncio import queues
 from discord.ext.commands.core import command
-from discord import channel, colour, voice_client
+from discord import activity, channel, colour, voice_client
 from aiohttp.client import request
 from discord.ext import commands, tasks
 from discord.player import FFmpegPCMAudio
@@ -43,8 +43,8 @@ giphyURL = "http://api.giphy.com/v1/gifs/search"
 # Command Initialization
 intents = discord.Intents().all()
 client = discord.Client(intents=intents)
-bot = commands.Bot(command_prefix=';', intents=intents)
-
+bot = commands.Bot(command_prefix=';', activity=activity, status=discord.Status.idle, intents=intents)
+bot.change_presence(activity=discord.Game(name=";help"))
 logging.basicConfig(level=logging.INFO)
 
 @bot.event
