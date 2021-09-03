@@ -6,9 +6,6 @@ import logging
 import time
 import Bot
 
-# Threading Bot Thread
-p1 = Process(target=Bot.launch)
-
 ######################## Github Implementation
 def GithubDownload():
     botURL = "https://raw.githubusercontent.com/Shrewkin/Fonzie-Bot/main/Code/Bot.py"
@@ -41,6 +38,7 @@ def UpdateLoop():
         exit("Exiting and updating files...")
 
 # Threading UpdateLoop Thread
+p1 = Process(target=Bot.launch)
 p2 = Process(target=UpdateLoop)
 
 def main():

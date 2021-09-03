@@ -29,6 +29,7 @@ from numpy import random as rand
 from pprint import pprint
 import linecache
 import aiohttp
+import asyncio
 import logging
 import random
 import json
@@ -85,8 +86,23 @@ async def on_message(message):
     if message.content.lower() in ['rage']:
         await message.channel.send('https://tenor.com/view/rage-dog-smash-keyboard-gaming-gif-21319862')
         
+    if message.content.lower() in ['coom']:
+        await message.channel.send('https://www.youtube.com/watch?v=mcsZ3cLUDJ0')
+        
+    if message.content.lower() in ['based', 'chad']:
+        await message.channel.send('https://tenor.com/view/giga-chad-gigachad-big-gif-21053844')
+        
+    if message.content.lower() in ['iran']:
+        await message.channel.send('https://cdn.discordapp.com/attachments/680928395399266314/767130121777709086/video0.mov')
+        
+    if message.content.lower() in ['tim', 'timothy']:
+        await message.channel.send('https://cdn.discordapp.com/attachments/742954139805548614/882666000988897350/clown_car_meme.mp4')
+        
     if message.content.lower() in ['who']:
         await message.channel.send('cares')
+        
+    if message.content.lower() in ['stupid bot']:
+        await message.channel.send('no you')
         
     if message.content.lower() in ['goodnight', 'gn']:
         await message.channel.send('https://cdn.discordapp.com/attachments/586797838458028034/855737692334850068/Snapchat-1984710211.jpg')
@@ -108,7 +124,7 @@ async def on_message(message):
     
 
 # Giphy Implementation ----------------------------------------------------------------------------------------------------------------------------
-giphyKey = linecache.getline('Fonzie-Bot\Authentication Keys\Authentication.txt', 17).rstrip()
+giphyKey = linecache.getline('/home/pstrizhev/Fonzie-Bot/AuthenticationKeys/Authentication.txt', 17).rstrip()
 
 @bot.command(pass_context=True)
 async def giphy(ctx, *, search):
@@ -120,10 +136,11 @@ async def giphy(ctx, *, search):
         response = await session.get('https://api.giphy.com/v1/gifs/random?api_key=' + giphyKey)
         data = json.loads(await response.text())
         embed.set_image(url=data['data']['images']['original']['url'])
-    elif search != '': # If the search is not empty then implement it into the search url
+    else: # If the search is not empty then implement it into the search url
         search.replace(' ', '+')
         response = await session.get('http://api.giphy.com/v1/gifs/search?q=' + search + '&api_key=' + giphyKey + '&limit=10')
         data = json.loads(await response.text())
+        print(data)
         gif_choice = rand.randint(0, 9)
         embed.set_image(url=data['data'][gif_choice]['images']['original']['url'])
 
@@ -153,7 +170,7 @@ async def detect(ctx, user: discord.Member, arg):
     
 
 # GitHub API --------------------------------------------------------------------------------------------------------------------------------------
-githubAPIToken = linecache.getline('Fonzie-Bot\Authentication Keys\Authentication.txt', 20).rstrip()
+githubAPIToken = linecache.getline('/home/pstrizhev/Fonzie-Bot/AuthenticationKeys/Authentication.txt', 20).rstrip()
 github = Github(githubAPIToken)
 
 @bot.command()
@@ -192,7 +209,7 @@ ytdl_format_options = {
     'postprocessors': [{
             'key': 'FFmpegExtractAudio',
             'preferredcodec': 'mp3',
-            'preferredquality': '192',
+            'preferredquality': '320',
         }],
 }
 
