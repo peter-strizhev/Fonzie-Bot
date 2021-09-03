@@ -87,7 +87,7 @@ async def on_message(message):
         await message.channel.send('https://tenor.com/view/rage-dog-smash-keyboard-gaming-gif-21319862')
         
     if message.content.lower() in ['coom']:
-        await message.channel.send('https://www.youtube.com/watch?v=mcsZ3cLUDJ0')
+        await message.channel.send('https://tenor.com/view/ketchup-mustard-condiments-squirt-weird-gif-16235402')
         
     if message.content.lower() in ['based', 'chad']:
         await message.channel.send('https://tenor.com/view/giga-chad-gigachad-big-gif-21053844')
@@ -104,21 +104,20 @@ async def on_message(message):
     if message.content.lower() in ['stupid bot']:
         await message.channel.send('no you')
         
+    if message.content.lower() in ['bloodborne']:
+        await message.channel.send('https://cdn.discordapp.com/attachments/883288801781379122/883339438183284766/1630672781909.png')
+        
     if message.content.lower() in ['goodnight', 'gn']:
         await message.channel.send('https://cdn.discordapp.com/attachments/586797838458028034/855737692334850068/Snapchat-1984710211.jpg')
         
-    # if message.conetnt.lower() in ['weed']:
-    #     await message.channel.send('https://cdn.discordapp.com/attachments/628658329899499563/825228862198644758/eeeTHALLISc4ra1_1275649121454624768480P_1.mp4')
+    if message.content.lower() in ['queen']:
+        await message.channel.send('https://cdn.discordapp.com/attachments/446468958309318656/828797976268636180/image0-44.png https://cdn.discordapp.com/attachments/446468958309318656/828797976691736617/image1-3.png https://cdn.discordapp.com/attachments/446468958309318656/828797976914296872/image2-2.png https://cdn.discordapp.com/attachments/446468958309318656/828797977094127636/image3-1.png')
+        
+    if message.conetnt.lower() in ['weed']:
+        await message.channel.send('https://cdn.discordapp.com/attachments/628658329899499563/825228862198644758/eeeTHALLISc4ra1_1275649121454624768480P_1.mp4')
 
-    # Youtube API Stuff
-    # if message.content.lower() in ['saturday']:        
-    #     url = 'https://www.youtube.com/channel/UCKAXX-M_naEMD491kiqntBA/videos'
-    #     keyword = 'Saturday'
-    #     videoTitles = fetch_titles(url)
-    #     for video in videoTitles:
-    #         if video['title'].__contains__(keyword):
-    #             await message.channel.send(video['url'])
-    #             break
+    if message.content.lower() in ['no']:
+        await message.channel.send('https://cdn.discordapp.com/attachments/506863443165577217/651565046404612116/1575351380698.png')
 
     await bot.process_commands(message)  # to allow other commands
     
