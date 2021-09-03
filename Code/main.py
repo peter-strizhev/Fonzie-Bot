@@ -27,8 +27,8 @@ def UpdateLoop():
     while True:
 
         # Number of seconds in a day
-        #counter = 86400
-        counter = 5
+        counter = 86400
+        # counter = 5 # Used for debugging
         while counter != 0:
             time.sleep(interval - ((time.time() - starttime) % interval))
             counter -= 1
