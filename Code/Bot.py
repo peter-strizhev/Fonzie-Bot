@@ -43,7 +43,7 @@ giphyURL = "http://api.giphy.com/v1/gifs/search"
 # Command Initialization
 intents = discord.Intents().all()
 client = discord.Client(intents=intents)
-bot = commands.Bot(command_prefix=';', activity=activity, status=discord.Status.idle, intents=intents)
+bot = commands.Bot(command_prefix=';', intents=intents)
 bot.change_presence(activity=discord.Game(name=";help"))
 logging.basicConfig(level=logging.INFO)
 
@@ -119,7 +119,7 @@ async def on_message(message):
     if message.content.lower() in ['queen']:
         await message.channel.send('https://cdn.discordapp.com/attachments/446468958309318656/828797976268636180/image0-44.png https://cdn.discordapp.com/attachments/446468958309318656/828797976691736617/image1-3.png https://cdn.discordapp.com/attachments/446468958309318656/828797976914296872/image2-2.png https://cdn.discordapp.com/attachments/446468958309318656/828797977094127636/image3-1.png')
         
-    if message.conetnt.lower() in ['weed']:
+    if message.content.lower() in ['weed']:
         await message.channel.send('https://cdn.discordapp.com/attachments/628658329899499563/825228862198644758/eeeTHALLISc4ra1_1275649121454624768480P_1.mp4')
 
     if message.content.lower() in ['no']:
