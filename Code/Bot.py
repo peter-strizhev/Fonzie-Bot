@@ -98,6 +98,9 @@ async def on_message(message):
     if message.content.lower() in ['tim', 'timothy']:
         await message.channel.send('https://cdn.discordapp.com/attachments/742954139805548614/882666000988897350/clown_car_meme.mp4')
         
+    if message.content.lower() in ['cat', 'chonker']:
+        await message.channel.send('https://cdn.discordapp.com/attachments/380122212587274261/882030880112144394/Cato_sexo_aka_asi_a_la_Bakki-1-1.mp4')
+        
     if message.content.lower() in ['who']:
         await message.channel.send('cares')
         
@@ -126,12 +129,7 @@ async def on_message(message):
         await message.channel.send('https://cdn.discordapp.com/attachments/506863443165577217/651565046404612116/1575351380698.png')
         
     if message.content.lower() in ['social credit']:
-        await message.channel.send('注意公民。 这是国家安全部。\n',
-                                   '您的互联网活动引起了我们的注意。\n',
-                                   '由于您的网络犯罪，您的社会信用评分将降至 -70。 (-70)\n',
-                                   '不要再这样做了。\n',
-                                   '中国共产党的光荣。\n',
-                                   'ATTENTION CITIZEN. THIS IS THE MINISTRY OF STATE SECURITY. \n',
+        await message.channel.send('ATTENTION CITIZEN. THIS IS THE MINISTRY OF STATE SECURITY. \n',
                                    'YOUR INTERNET ACTIVITY HAS ATTRACTED OUR ATTENTION. \n',
                                    'DUE TO YOUR INTERNET CRIMES YOU WILL BE BROUGHT DOWN TO -70 SOCIAL CREDIT SCORE. (-70)\n',
                                    'DO NOT DO THIS AGAIN. \n',
