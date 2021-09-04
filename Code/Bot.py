@@ -101,9 +101,15 @@ async def on_message(message):
     if message.content.lower() in ['who']:
         await message.channel.send('cares')
         
+    if message.content.lower() in ['credit score']:
+        await message.channel.send('https://cdn.discordapp.com/attachments/630596126344609793/877522790138392587/video0.mp4')
+        
     if message.content.lower() in ['stupid bot']:
         await message.channel.send('no you')
-        
+    
+    if message.content.lower() in ['floppa']:
+        await message.channel.send('https://cdn.discordapp.com/attachments/874447411144171610/882110009306124319/video0.mp4')
+    
     if message.content.lower() in ['bloodborne']:
         await message.channel.send('https://cdn.discordapp.com/attachments/883288801781379122/883339438183284766/1630672781909.png')
         
