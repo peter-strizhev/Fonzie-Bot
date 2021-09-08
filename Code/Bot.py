@@ -132,11 +132,11 @@ async def on_message(message):
         await message.channel.send('https://cdn.discordapp.com/attachments/506863443165577217/651565046404612116/1575351380698.png')
         
     if message.content.lower() in ['social credit']:
-        await message.channel.send('ATTENTION CITIZEN. THIS IS THE MINISTRY OF STATE SECURITY. \n',
-                                   'YOUR INTERNET ACTIVITY HAS ATTRACTED OUR ATTENTION. \n',
-                                   'DUE TO YOUR INTERNET CRIMES YOU WILL BE BROUGHT DOWN TO -70 SOCIAL CREDIT SCORE. (-70)\n',
-                                   'DO NOT DO THIS AGAIN. \n',
-                                   'GLORY TO THE CHINESE COMMUNIST PARTY.\n',
+        await message.channel.send('ATTENTION CITIZEN. THIS IS THE MINISTRY OF STATE SECURITY. \n' +
+                                   'YOUR INTERNET ACTIVITY HAS ATTRACTED OUR ATTENTION. \n' +
+                                   'DUE TO YOUR INTERNET CRIMES YOU WILL BE BROUGHT DOWN TO -70 SOCIAL CREDIT SCORE. (-70)\n' + 
+                                   'DO NOT DO THIS AGAIN. \n' +
+                                   'GLORY TO THE CHINESE COMMUNIST PARTY.\n' +
                                    'https://cdn.discordapp.com/attachments/802281935308849192/868053509545791498/CCP.mp4')
 
     await bot.process_commands(message)  # to allow other commands
