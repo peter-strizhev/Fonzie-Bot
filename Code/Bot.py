@@ -44,7 +44,6 @@ giphyURL = "http://api.giphy.com/v1/gifs/search"
 intents = discord.Intents().all()
 client = discord.Client(intents=intents)
 bot = commands.Bot(command_prefix=';', intents=intents)
-bot.change_presence(activity=discord.Game(name=";help"))
 logging.basicConfig(level=logging.INFO)
 
 @bot.event
@@ -96,10 +95,62 @@ async def on_message(message):
         await message.channel.send('https://cdn.discordapp.com/attachments/680928395399266314/767130121777709086/video0.mov')
         
     if message.content.lower() in ['tim', 'timothy']:
-        await message.channel.send('https://cdn.discordapp.com/attachments/742954139805548614/882666000988897350/clown_car_meme.mp4')
-        
-    if message.content.lower() in ['cat', 'chonker']:
-        await message.channel.send('https://cdn.discordapp.com/attachments/380122212587274261/882030880112144394/Cato_sexo_aka_asi_a_la_Bakki-1-1.mp4')
+        start = 0
+        end = 51
+        randomNum = [random.randint(start, end)]
+        option = {0 : 'https://cdn.discordapp.com/attachments/742954139805548614/882666000988897350/clown_car_meme.mp4',
+                  1 : 'https://cdn.discordapp.com/attachments/508877167812149249/836266385763205130/176939772_976240653146457_2307467322338258938_n.mp4',
+                  2 : 'https://cdn.discordapp.com/attachments/508877167812149249/836269804557172756/-_gta_5_car_drip.mp4',
+                  3 : 'https://cdn.discordapp.com/attachments/508877167812149249/836273422815592528/DtBsZu4R5N26s6lH.mp4',
+                  4 : 'https://cdn.discordapp.com/attachments/508877167812149249/836273495658463282/GTA_DRIP_CAR.mp4',
+                  5 : 'https://cdn.discordapp.com/attachments/508877167812149249/836264156419325972/FNAF_car.mp4',
+                  6 : 'https://cdn.discordapp.com/attachments/332532353668743169/837323278536278066/0CAxfx2BJmoY6uOi.mp4',
+                  7 : 'https://cdn.discordapp.com/attachments/443859138754117643/837355428286824448/sarywapo_on_Instagram___Imaginate_ser_de_calama_y__1MP42.mp4',
+                  8 : 'https://cdn.discordapp.com/attachments/448475898803519509/837374073419333652/Car_Drip_Skype.mp4',
+                  9 : 'https://cdn.discordapp.com/attachments/448475898803519509/837374737202020453/Geometry_Dash_Car.mp4',
+                  10 : 'https://cdn.discordapp.com/attachments/448475898803519509/837374761884713000/Angry_Birds_Car.mp4',
+                  11 : 'https://cdn.discordapp.com/attachments/448475898803519509/837374781795467324/Bad_Piggys_Car.mp4',
+                  12 : 'https://cdn.discordapp.com/attachments/448475898803519509/837374795669962763/Kahoot_Car.mp4',
+                  13 : 'https://cdn.discordapp.com/attachments/448475898803519509/837466647891279922/snapchat_car.mp4',
+                  14 : 'https://cdn.discordapp.com/attachments/448475898803519509/837471644406251550/xbox_360_car_meme.mp4',
+                  15 : 'https://cdn.discordapp.com/attachments/448475898803519509/837471644674555914/Blackberry_Car.mp4',
+                  16 : 'https://cdn.discordapp.com/attachments/448475898803519509/837471646121197568/Garrys_Mod_Car.mp4',
+                  17 : 'https://cdn.discordapp.com/attachments/448475898803519509/837471650366357524/Roblox_Car.mp4',
+                  18 : 'https://cdn.discordapp.com/attachments/448475898803519509/837471650244591626/League_of_Legends_Car_drip.mp4',
+                  19 : 'https://cdn.discordapp.com/attachments/448475898803519509/837471651388981308/Wii_U_Car_Drip.mp4',
+                  20 : 'https://cdn.discordapp.com/attachments/448475898803519509/837471651314532402/postal_2_car_drip.mp4',
+                  21 : 'https://cdn.discordapp.com/attachments/448475898803519509/837471652311990322/numberblocks_car_drip.mp4',
+                  22 : 'https://cdn.discordapp.com/attachments/448475898803519509/837471653147181076/Forza_Italia_Car_Drip.mp4',
+                  23 : 'https://cdn.discordapp.com/attachments/448475898803519509/837471744599785512/America_Drip_Car.mp4',
+                  24 : 'https://cdn.discordapp.com/attachments/448475898803519509/837471745413611530/Minecraft_Car_Drip.mp4',
+                  25 : 'https://cdn.discordapp.com/attachments/448475898803519509/837471815458357278/6ed6e.mp4',
+                  26 : 'https://cdn.discordapp.com/attachments/448475898803519509/837471747800170567/Car_Drip_Big_Small.mp4',
+                  27 : 'https://cdn.discordapp.com/attachments/448475898803519509/837471748835770409/rsxstgwset.mp4',
+                  28 : 'https://cdn.discordapp.com/attachments/448475898803519509/837471751948468244/tedzhyszyh.mp4',
+                  29 : 'https://cdn.discordapp.com/attachments/448475898803519509/837471752245346314/Car_Drip_Facebook_Messenger.mp4',
+                  30 : 'https://cdn.discordapp.com/attachments/448475898803519509/837471753897771008/Car_Drip_Xiaomi.mp4',
+                  31 : 'https://cdn.discordapp.com/attachments/448475898803519509/837471757311934514/Car_Drip_Windows_Phone_Nokia.mp4',
+                  32 : 'https://cdn.discordapp.com/attachments/448475898803519509/837471808709328936/Car_Drip_Polish.mp4',
+                  33 : 'https://cdn.discordapp.com/attachments/448475898803519509/837471810979102791/Car_Drip_TMobile.mp4',
+                  34 : 'https://cdn.discordapp.com/attachments/448475898803519509/837471813536710666/Car_Drip_Polsat_TV.mp4',
+                  35 : 'https://cdn.discordapp.com/attachments/448475898803519509/837471813663195146/Car_Drip_Avast_Antivirus_Super_useless_fucking_antivirus.mp4',
+                  36 : 'https://cdn.discordapp.com/attachments/448475898803519509/837471813743017984/Car_Drip_Tango_Live_App.mp4',
+                  37 : 'https://cdn.discordapp.com/attachments/448475898803519509/837471816875638784/Car_Drip_Huawei.mp4',
+                  38 : 'https://cdn.discordapp.com/attachments/448475898803519509/837471818679451729/Reds_Among_Drip_Car_-_Drip_Car_Meme.mp4',
+                  39 : 'https://cdn.discordapp.com/attachments/448475898803519509/837471854221590558/undertale_car.mp4',
+                  40 : 'https://cdn.discordapp.com/attachments/448475898803519509/837471856033267752/Troll_face_car.mp4',
+                  41 : 'https://cdn.discordapp.com/attachments/448475898803519509/837471858927861790/kfc_car.mp4',
+                  42 : 'https://cdn.discordapp.com/attachments/448475898803519509/837471860147880006/clash_of_clans_car.mp4',
+                  43 : 'https://cdn.discordapp.com/attachments/448475898803519509/837471861486387253/home_depot_car.mp4',
+                  44 : 'https://cdn.discordapp.com/attachments/448475898803519509/837471863772938270/dsi_car.mp4',
+                  45 : 'https://cdn.discordapp.com/attachments/448475898803519509/837471865999458316/3ds_car.mp4',
+                  46 : 'https://cdn.discordapp.com/attachments/448475898803519509/837471907137847336/gamecube_car.mp4',
+                  47 : 'https://cdn.discordapp.com/attachments/448475898803519509/837471908634034186/nokia_car_meme.mp4',
+                  48 : 'https://cdn.discordapp.com/attachments/448475898803519509/837471911213924402/kitten.mp4',
+                  49 : 'https://cdn.discordapp.com/attachments/448475898803519509/837471912807890944/Apple_Car_Meme.mp4',
+                  50 : 'https://cdn.discordapp.com/attachments/448475898803519509/837471914385080323/twitter_car.mp4',
+                  51 : 'https://cdn.discordapp.com/attachments/448475898803519509/837471915147788299/telegram_car_meme.mp4'}
+        await message.channel.send(option[randomNum])
         
     if message.content.lower() in ['who']:
         await message.channel.send('cares')
