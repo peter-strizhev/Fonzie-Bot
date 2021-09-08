@@ -97,7 +97,7 @@ async def on_message(message):
     if message.content.lower() in ['tim', 'timothy']:
         start = 0
         end = 51
-        randomNum = [random.randint(start, end)]
+        randomNum = random.randint(start, end)
         option = {0 : 'https://cdn.discordapp.com/attachments/742954139805548614/882666000988897350/clown_car_meme.mp4',
                   1 : 'https://cdn.discordapp.com/attachments/508877167812149249/836266385763205130/176939772_976240653146457_2307467322338258938_n.mp4',
                   2 : 'https://cdn.discordapp.com/attachments/508877167812149249/836269804557172756/-_gta_5_car_drip.mp4',
