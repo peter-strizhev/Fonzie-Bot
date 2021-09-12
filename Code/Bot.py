@@ -194,7 +194,7 @@ async def on_message(message):
     
 
 # Giphy Implementation ----------------------------------------------------------------------------------------------------------------------------
-giphyKey = linecache.getline('/home/pstrizhev/Fonzie-Bot/AuthenticationKeys/Authentication.txt', 17).rstrip()
+giphyKey = linecache.getline('/DiscordBot/Fonzie-Bot/AuthenticationKeys/Authentication.txt', 17).rstrip()
 
 @bot.command(pass_context=True)
 async def giphy(ctx, *, search):
@@ -240,7 +240,7 @@ async def detect(ctx, user: discord.Member, arg):
     
 
 # GitHub API --------------------------------------------------------------------------------------------------------------------------------------
-githubAPIToken = linecache.getline('/home/pstrizhev/Fonzie-Bot/AuthenticationKeys/Authentication.txt', 20).rstrip()
+githubAPIToken = linecache.getline('/DiscordBot/Fonzie-Bot/AuthenticationKeys/Authentication.txt', 20).rstrip()
 github = Github(githubAPIToken)
 
 @bot.command()
@@ -457,5 +457,5 @@ async def penis(ctx, *users: discord.Member):
 
 # Code to get token for bot -----------------------------------------------------------------------------------------------------------------------
 def launch():
-    token = linecache.getline('/home/pstrizhev/Fonzie-Bot/AuthenticationKeys/Authentication.txt', 8).rstrip()
+    token = linecache.getline('/DiscordBot/Fonzie-Bot/AuthenticationKeys/Authentication.txt', 8).rstrip()
     bot.run(token)
