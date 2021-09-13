@@ -158,6 +158,12 @@ async def on_message(message):
     if message.content.lower() in ['who']:
         await message.channel.send('cares')
     
+    if message.content.lower() in ['big man']:
+        await message.channel.send('https://cdn.discordapp.com/attachments/731456656294281246/886987646746894378/BIGMANTIME.mp4')    
+    
+    if message.content.lower() in ['general']:
+        await message.channel.send('https://tenor.com/view/discord-admin-meme-funny-gif-18373702')
+        
     if message.content.lower() in ['rat']:
         await message.channel.send('https://tenor.com/view/rats-gif-19501976')
         
