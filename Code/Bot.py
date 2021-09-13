@@ -94,6 +94,9 @@ async def on_message(message):
     if message.content.lower() in ['iran']:
         await message.channel.send('https://cdn.discordapp.com/attachments/680928395399266314/767130121777709086/video0.mov')
         
+    if message.content.lower() in ['monkey']:
+        await message.channel.send('https://cdn.discordapp.com/attachments/650743322192773206/875122761129922580/video0.mp4')
+        
     if message.content.lower() in ['tim', 'timothy']:
         start = 0
         end = 51
