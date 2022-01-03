@@ -164,6 +164,9 @@ async def on_message(message):
     if message.content.lower() in ['general']:
         await message.channel.send('https://tenor.com/view/discord-admin-meme-funny-gif-18373702')
         
+    if message.content.lower() in ['cope']:
+        await message.channel.send('https://cdn.discordapp.com/attachments/630596126344609793/888183698275573810/image0.gif')
+        
     if message.content.lower() in ['rat']:
         await message.channel.send('https://tenor.com/view/rats-gif-19501976')
         
@@ -190,6 +193,9 @@ async def on_message(message):
         
     if message.content.lower() in ['weed']:
         await message.channel.send('https://cdn.discordapp.com/attachments/628658329899499563/825228862198644758/eeeTHALLISc4ra1_1275649121454624768480P_1.mp4')
+        
+    if message.content.lower() in ['yoinky']:
+        await message.channel.send('https://cdn.discordapp.com/attachments/874447411144171610/887551861647884318/video0-181.mp4')
 
     if message.content.lower() in ['no']:
         await message.channel.send('https://cdn.discordapp.com/attachments/506863443165577217/651565046404612116/1575351380698.png')
@@ -206,7 +212,7 @@ async def on_message(message):
     
 
 # Giphy Implementation ----------------------------------------------------------------------------------------------------------------------------
-giphyKey = linecache.getline('/DiscordBot/Fonzie-Bot/AuthenticationKeys/Authentication.txt', 17).rstrip()
+giphyKey = linecache.getline('C:\\Users\\Striz\\Desktop\\DiscordBot\\Fonzie-Bot\\AuthenticationKeys\\Authentication.txt', 17).rstrip()
 
 @bot.command(pass_context=True)
 async def giphy(ctx, *, search):
@@ -252,7 +258,7 @@ async def detect(ctx, user: discord.Member, arg):
     
 
 # GitHub API --------------------------------------------------------------------------------------------------------------------------------------
-githubAPIToken = linecache.getline('/DiscordBot/Fonzie-Bot/AuthenticationKeys/Authentication.txt', 20).rstrip()
+githubAPIToken = linecache.getline('C:\\Users\\Striz\\Desktop\\DiscordBot\\Fonzie-Bot\\AuthenticationKeys\\Authentication.txt', 20).rstrip()
 github = Github(githubAPIToken)
 
 @bot.command()
@@ -300,7 +306,7 @@ ffmpeg_options = {
     'options': '-vn'
 }
 
-songQueue = []
+queue = []
 
 ytdl = youtube_dl.YoutubeDL(ytdl_format_options)
 
@@ -310,7 +316,18 @@ class YTDLSource(discord.PCMVolumeTransformer):
         self.data = data
         self.title = data.get('title')
         self.url = data.get('url')
-    
+
+    @classmethod
+    async def from_url(cls, url, *, loop=None, stream=False, play=False):
+        loop = loop or asyncio.get_event_loop()
+        data = await loop.run_in_executor(None, lambda: ytdl.extract_info(url, download=not stream or play))
+
+        if 'entries' in data:
+            data = data['entries'][0]
+
+        filename = data['url'] if stream else ytdl.prepare_filename(data)
+        return cls(discord.FFmpegPCMAudio(filename, **ffmpeg_options), data=data)
+
 @bot.command(name='join', help='Tells the bot to join the voice channel')
 async def join(ctx):
     if not ctx.message.author.voice:
@@ -318,6 +335,8 @@ async def join(ctx):
         return
     else:
         channel = ctx.message.author.voice.channel
+        queue.clear()
+        await ctx.send('Connected to {}'.format(channel))
     await channel.connect()
     
 @bot.command(name='leave', help='Command to make the bot leave teh voice channel')
@@ -339,7 +358,7 @@ async def play(ctx, *, url):
     else:
         voice_channel = await channel.connect()
         await ctx.send('Successfully joined `{}`'.format(channel))
-    
+
     def search(query):
         with ytdl:
             try:
@@ -350,21 +369,65 @@ async def play(ctx, *, url):
                 info = ytdl.extract_info(query, download=False)
         return (info, info['formats'][0]['url'])
     
-    await ctx.send('Searching for: {} :mag_right:'.format(url))
+    try:
+        async with ctx.typing():
+            video, source = search(url)
+            if len(queue) == 0:
+                startPlaying(voice_channel, source)
+                await ctx.send(':mag_right: **Searching for** ``' + url + '``\n**Now Playing:** ``{}'.format(source.title) + "``")
+            else:
+                queue[len(queue)] = source
+                await ctx.send(':mag_right: **Searching for** ``' + url + '``\n<:youtube:763374159567781890> **Added to queue:** ``{}'.format(source.title) + "``")
+    except:
+        await ctx.send("Something went wrong, please try again")
+        
+    # server = ctx.message.guild
+    # voice_channel = server.voice_client
+    # channel = ctx.message.author.voice.channel
+    # 
+    # if voice_channel and voice_channel.is_connected():
+    #     pass
+    # else:
+    #     voice_channel = await channel.connect()
+    #     await ctx.send('Successfully joined `{}`'.format(channel))
+    # 
+    # def search(query):
+    #     with ytdl:
+    #         try:
+    #             request.get(query)
+    #         except:
+    #             info = ytdl.extract_info('ytsearch: {}'.format(query), download=False)['entries'][0]
+    #         else:
+    #             info = ytdl.extract_info(query, download=False)
+    #     return (info, info['formats'][0]['url'])
+    # 
+    # await ctx.send('Searching for: {} :mag_right:'.format(url))
+    # 
+    # video, source = search(url)
+    # voice_channel.play(FFmpegPCMAudio(source, **ffmpeg_options), after=lambda e: print('done', e))
+    # voice_channel.is_playing()
+    # await ctx.send('Playing: :notes: `{}` - Now!'.format(url))
     
-    video, source = search(url)
-    voice_channel.play(FFmpegPCMAudio(source, **ffmpeg_options), after=lambda e: print('done', e))
-    voice_channel.is_playing()
-    await ctx.send('Playing: :notes: `{}` - Now!'.format(url))
-    
+def startPlaying(voice_channel, source):
+    queue.append(source)
+    i = 0
+    while i < len(queue):
+        try:
+            voice_channel.play(FFmpegPCMAudio(queue[i], **ffmpeg_options), after=lambda e: print('done', e))
+            # voice_channel.play(queue[i], after=lambda e: print('Player error: %s' % e) if e else None)
+        except:
+            pass
+        i += 1
+        
 @bot.command(name='pause', help='This command pauses teh song')
 async def pause(ctx):
     voice_client = ctx.message.guild.voice_client
     if voice_client.pause():
         await voice_client.pause()
+        return
     else:
         await ctx.send("The bot is not playing anything you big goober.")
-
+        
 @bot.command(name='resume', help='Resumes the current song.')
 async def resume(ctx):
     voice_client = ctx.message.guild.voice_client
@@ -377,9 +440,12 @@ async def resume(ctx):
 async def stop(ctx):
     voice_client = ctx.message.guild.voice_client
     if voice_client.is_playing():
+        queue.clear()
         await voice_client.stop()
     else:
         await ctx.send("The bot wasn't playing anything.")
+
+
 
 # TODO: Youtube API --------------------------------------------------------------------------------------------------------------------------------
 # @bot.command()
@@ -469,5 +535,7 @@ async def penis(ctx, *users: discord.Member):
 
 # Code to get token for bot -----------------------------------------------------------------------------------------------------------------------
 def launch():
-    token = linecache.getline('/DiscordBot/Fonzie-Bot/AuthenticationKeys/Authentication.txt', 8).rstrip()
+    token = linecache.getline('C:\\Users\\Striz\\Desktop\\DiscordBot\\Fonzie-Bot\\AuthenticationKeys\\Authentication.txt', 8).rstrip()
     bot.run(token)
+    
+launch()
