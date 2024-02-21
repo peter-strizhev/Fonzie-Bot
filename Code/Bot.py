@@ -347,6 +347,52 @@ async def leave(ctx):
     else:
         await ctx.send('Fonzie currently isnt in a voice channel')
 
+    
+@bot.command(name='aqueue', help='This will add a given song to the queue')
+async def aqueue(ctx, *, url):
+    def search(query):
+        with ytdl:
+            try:
+                request.get(query)
+            except:
+                info = ytdl.extract_info('ytsearch: {}'.format(query), download=False)['entries'][0]
+            else:
+                info = ytdl.extract_info(query, download=False)
+        return (info, info['formats'][0]['url'])
+    
+    try:
+        video, source = search(url)
+        queue.append(source)
+        user = ctx.message.author.mention
+        await ctx.send('``{}`` was added to the queue by {}.'.format(url, user))
+    except:
+        await ctx.send('Could not add {} to the queue.'.format(url))
+        
+@bot.command(name='rqueue', help='This will remove the specified element in the queue (array format, so 0 is the first position in the queue because im lazy)')
+async def rqueue(ctx, number):
+    try:
+        del(queue[int(number)])
+        if len(queue) < 1:
+            await ctx.send('The queue is empty now.')
+        else:
+            await ctx.send('The queue is now {}'.format(queue))
+    except:
+        await ctx.send("Number is out of range, the queue starts at 0")
+        
+@bot.command(name='qclear', help='This will clear the queue')
+async def qclear(ctx):
+    global queue
+    queue.clear()
+    user = ctx.message.author.mention
+    await ctx.send('The queue was cleared by {}'.format(user))
+    
+@bot.command(name='queue', help='This will display all the songs in the queue')
+async def queue(ctx):
+    if len(queue) < 1:
+        await ctx.send('The queue is empty.')
+    else:
+        await ctx.send('Your queue is now {}'.format(queue))
+        
 @bot.command(name='play', help='This will play or queue a new song')
 async def play(ctx, *, url):
     server = ctx.message.guild
